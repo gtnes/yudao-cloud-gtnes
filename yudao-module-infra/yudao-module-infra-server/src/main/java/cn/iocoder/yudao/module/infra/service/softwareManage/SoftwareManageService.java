@@ -1,11 +1,12 @@
-package cn.iocoder.yudao.module.infra.service.gtnes.softwareManage;
+package cn.iocoder.yudao.module.infra.service.softwareManage;
 
 import java.util.*;
+
+import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.SoftwareManagePageReqVO;
+import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.SoftwareManageSaveReqVO;
 import jakarta.validation.*;
-import cn.iocoder.yudao.module.infra.controller.admin.gtnes.softwareManage.vo.*;
-import cn.iocoder.yudao.module.infra.dal.dataobject.gtnes.softwareManage.SoftwareManageDO;
+import cn.iocoder.yudao.module.infra.dal.dataobject.softwareManage.SoftwareManageDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 
 /**
  * 软件管理 Service 接口

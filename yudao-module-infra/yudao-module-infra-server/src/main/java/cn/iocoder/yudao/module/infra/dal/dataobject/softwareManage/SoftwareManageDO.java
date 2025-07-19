@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.infra.dal.dataobject.gtnes.softwareManage;
+package cn.iocoder.yudao.module.infra.dal.dataobject.softwareManage;
 
 import lombok.*;
 import java.util.*;

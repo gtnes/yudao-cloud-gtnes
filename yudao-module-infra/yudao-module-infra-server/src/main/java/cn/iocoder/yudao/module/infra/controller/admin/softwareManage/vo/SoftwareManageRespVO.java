@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.infra.controller.admin.gtnes.softwareManage.vo;
+package cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;

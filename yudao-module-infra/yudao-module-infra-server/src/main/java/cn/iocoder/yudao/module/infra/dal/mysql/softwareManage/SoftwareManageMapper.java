@@ -1,13 +1,13 @@
-package cn.iocoder.yudao.module.infra.dal.mysql.gtnes.softwareManage;
+package cn.iocoder.yudao.module.infra.dal.mysql.softwareManage;
 
 import java.util.*;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
-import cn.iocoder.yudao.module.infra.dal.dataobject.gtnes.softwareManage.SoftwareManageDO;
+import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.SoftwareManagePageReqVO;
+import cn.iocoder.yudao.module.infra.dal.dataobject.softwareManage.SoftwareManageDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.infra.controller.admin.gtnes.softwareManage.vo.*;
 
 /**
  * 软件管理 Mapper

@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.infra.controller.admin.gtnes.softwareManage.vo;
+package cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo;
 
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 import com.alibaba.excel.annotation.ExcelProperty;

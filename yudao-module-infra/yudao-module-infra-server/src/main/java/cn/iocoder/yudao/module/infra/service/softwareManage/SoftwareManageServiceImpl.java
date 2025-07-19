@@ -1,23 +1,22 @@
-package cn.iocoder.yudao.module.infra.service.gtnes.softwareManage;
+package cn.iocoder.yudao.module.infra.service.softwareManage;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.SoftwareManagePageReqVO;
+import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.SoftwareManageSaveReqVO;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import cn.iocoder.yudao.module.infra.controller.admin.gtnes.softwareManage.vo.*;
-import cn.iocoder.yudao.module.infra.dal.dataobject.gtnes.softwareManage.SoftwareManageDO;
+
+import cn.iocoder.yudao.module.infra.dal.dataobject.softwareManage.SoftwareManageDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
-import cn.iocoder.yudao.module.infra.dal.mysql.gtnes.softwareManage.SoftwareManageMapper;
+import cn.iocoder.yudao.module.infra.dal.mysql.softwareManage.SoftwareManageMapper;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
-import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.diffList;
 import static cn.iocoder.yudao.module.infra.enums.ErrorCodeConstants.*;
 
 /**
@@ -98,8 +97,8 @@ public class SoftwareManageServiceImpl implements SoftwareManageService {
                 result.add(item);
             }
         }
-        // 可选：按版本号升序排列
-        result.sort(Comparator.comparing(SoftwareManageDO::getVersion, this::compareVersion));
+        // 按id倒序排列
+        result.sort(Comparator.comparing(SoftwareManageDO::getId).reversed());
         return result;
     }
 
