@@ -71,5 +71,6 @@ public interface ErrorCodeConstants {
 
     // ========== 软件管理 1-001-202-000 ==========
     ErrorCode SOFTWARE_MANAGE_NOT_EXISTS = new ErrorCode(1_001_202_000, "软件管理不存在");
+    ErrorCode SOFTWARE_RECORD_NOT_EXISTS = new ErrorCode(1_001_202_001, "软件使用记录不存在");
 
 }
