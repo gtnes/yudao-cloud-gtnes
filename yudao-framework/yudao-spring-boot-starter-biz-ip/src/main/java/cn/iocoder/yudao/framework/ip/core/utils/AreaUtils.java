@@ -173,6 +173,43 @@ public class AreaUtils {
     }
 
     /**
+     * 递归获取完整行政区名称（如：中国广东省深圳市南山区）
+     *
+     * @param area 区域对象
+     * @param separator 分隔符
+     * @param includeCountry 是否包含国家（如中国）
+     * @return 完整行政区名称
+     */
+    public static String formatFullPath(Area area, String separator, boolean includeCountry) {
+        if (area == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        List<String> names = new ArrayList<>();
+        Area current = area;
+        while (current != null) {
+            // 跳过全球节点，但保留中国节点（如果includeCountry为true）
+            if (current.getId() != null && current.getId().equals(Area.ID_GLOBAL)) {
+                break;
+            }
+            // 如果不包含国家且当前是中国节点，则跳过
+            if (!includeCountry && (current.getId() != null && current.getId().equals(Area.ID_CHINA))) {
+                current = current.getParent();
+                continue;
+            }
+            names.add(0, current.getName());
+            current = current.getParent();
+        }
+        for (int i = 0; i < names.size(); i++) {
+            sb.append(names.get(i));
+            if (i < names.size() - 1) {
+                sb.append(separator);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * 获取指定类型的区域列表
      *
      * @param type 区域类型

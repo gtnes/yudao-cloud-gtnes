@@ -22,6 +22,10 @@ public class SoftwareRecordRespVO {
     @ExcelProperty("ip")
     private String ip;
 
+    @Schema(description = "IP归属地")
+    @ExcelProperty("IP归属地")
+    private String ipHomeLocation;
+
     @Schema(description = "软件类别 1=9GridTools", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "软件类别 1=9GridTools", converter = DictConvert.class)
     @DictFormat("software_type") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
@@ -51,6 +55,14 @@ public class SoftwareRecordRespVO {
 
     @Schema(description = "描述")
     private String description;
+
+    @Schema(description = "总更新次数")
+    @ExcelProperty("总更新次数")
+    private Integer totalUpdateCount;
+
+    @Schema(description = "今日更新次数")
+    @ExcelProperty("今日更新次数")
+    private Integer todayUpdateCount;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")

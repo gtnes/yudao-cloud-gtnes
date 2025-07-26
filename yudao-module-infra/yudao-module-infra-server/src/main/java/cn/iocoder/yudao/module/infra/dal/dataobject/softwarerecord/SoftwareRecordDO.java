@@ -32,6 +32,10 @@ public class SoftwareRecordDO extends BaseDO {
      */
     private String ip;
     /**
+     * IP归属地
+     */
+    private String ipHomeLocation;
+    /**
      * 软件类别 1=9GridTools
      *
      * 枚举 {@link TODO software_type 对应的类}
@@ -65,6 +69,14 @@ public class SoftwareRecordDO extends BaseDO {
      * 描述
      */
     private String description;
+    /**
+     * 总更新次数
+     */
+    private Integer totalUpdateCount;
+    /**
+     * 今日更新次数
+     */
+    private Integer todayUpdateCount;
 
 
 }

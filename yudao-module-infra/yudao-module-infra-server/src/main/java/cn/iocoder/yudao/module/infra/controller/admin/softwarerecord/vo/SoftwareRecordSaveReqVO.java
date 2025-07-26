@@ -43,4 +43,10 @@ public class SoftwareRecordSaveReqVO {
     @Schema(description = "描述")
     private String description;
 
+    @Schema(description = "总更新次数")
+    private Integer totalUpdateCount;
+
+    @Schema(description = "今日更新次数")
+    private Integer todayUpdateCount;
+
 }

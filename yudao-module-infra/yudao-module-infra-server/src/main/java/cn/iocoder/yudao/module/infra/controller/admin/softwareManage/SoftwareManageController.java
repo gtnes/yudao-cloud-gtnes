@@ -147,14 +147,14 @@ public class SoftwareManageController {
         Integer bit = convertBit(reqVO.getOsArch());
         // 记录或更新软件使用信息（根据设备指纹和IP）
         softwareRecordService.createOrUpdateByFingerprintAndIp(
-            reqVO.getDeviceFingerprint(),
-            ip,
-            reqVO.getPlatform(),
-            bit,
-            reqVO.getPlatformName(),
-            reqVO.getOsRelease(),
-            reqVO.getAppType(),
-            reqVO.getAppVersion()
+            reqVO.getDeviceFingerprint(), // 设备指纹
+            ip, // 客户端IP
+            reqVO.getPlatform(), // 平台编号
+            bit, // 操作系统架构
+            reqVO.getPlatformName(), // 平台名称
+            reqVO.getOsRelease(), // 操作系统版本
+            reqVO.getAppType(), // 应用类型
+            reqVO.getAppVersion() // 应用版本
         );
         // 返回新版本软件列表
         return success(BeanUtils.toBean(newVersions, SoftwareManageRespVO.class));

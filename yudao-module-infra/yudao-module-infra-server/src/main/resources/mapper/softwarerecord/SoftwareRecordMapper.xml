@@ -11,7 +11,13 @@
 
     <select id="selectByFingerprintAndIp" resultType="cn.iocoder.yudao.module.infra.dal.dataobject.softwarerecord.SoftwareRecordDO">
         SELECT * FROM infra_gtnes_software_record
-        WHERE device_fingerprint = #{deviceFingerprint} AND ip = #{ip}
+        WHERE device_fingerprint = #{deviceFingerprint} AND ip = #{ip} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="selectByFingerprint" resultType="cn.iocoder.yudao.module.infra.dal.dataobject.softwarerecord.SoftwareRecordDO">
+        SELECT * FROM infra_gtnes_software_record
+        WHERE device_fingerprint = #{deviceFingerprint} AND deleted = 0
         LIMIT 1
     </select>
 

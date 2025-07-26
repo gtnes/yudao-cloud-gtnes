@@ -30,4 +30,5 @@ public interface SoftwareRecordMapper extends BaseMapperX<SoftwareRecordDO> {
     }
 
     SoftwareRecordDO selectByFingerprintAndIp(String deviceFingerprint, String ip);
+    SoftwareRecordDO selectByFingerprint(String deviceFingerprint);
 }
