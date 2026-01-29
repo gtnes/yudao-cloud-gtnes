@@ -20,6 +20,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.framework.common.util.servlet.ServletUtils;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
@@ -30,7 +31,6 @@ import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import cn.iocoder.yudao.module.infra.controller.admin.softwareManage.vo.*;
 import cn.iocoder.yudao.module.infra.dal.dataobject.softwareManage.SoftwareManageDO;
 import cn.iocoder.yudao.module.infra.service.softwareManage.SoftwareManageService;
-import cn.iocoder.yudao.module.infra.controller.admin.softwarerecord.vo.SoftwareRecordSaveReqVO;
 import cn.iocoder.yudao.module.infra.service.softwarerecord.SoftwareRecordService;
 
 @Tag(name = "管理后台 - 软件管理")
@@ -138,11 +138,8 @@ public class SoftwareManageController {
             reqVO.getAppVersion(),
             reqVO.getPlatform() == null ? null : reqVO.getPlatform().byteValue()
         );
-        // 获取客户端IP地址
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
+        // 获取客户端IP地址（使用ServletRequestUtils解决反向代理时IP地址为"*.*.*.*,*.*.*.*"的问题）
+        String ip = ServletUtils.getClientIP(request);
         // 转换操作系统架构为数据库bit字段
         Integer bit = convertBit(reqVO.getOsArch());
         // 记录或更新软件使用信息（根据设备指纹和IP）
