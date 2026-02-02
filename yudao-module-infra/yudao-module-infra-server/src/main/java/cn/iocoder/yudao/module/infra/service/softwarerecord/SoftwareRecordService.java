@@ -63,4 +63,30 @@ public interface SoftwareRecordService {
      * 根据deviceFingerprint和ip新增或更新软件使用记录
      */
     void createOrUpdateByFingerprintAndIp(String deviceFingerprint, String ip, Integer platform, Integer bit, String platformName, String osRelease, Integer appType, String appVersion);
+
+    /**
+     * 获取软件使用记录统计数据
+     * <p>
+     * 根据软件类别统计相关数据：
+     * <ul>
+     *   <li>今日新增合计（创建日期为今天的数据条数）</li>
+     *   <li>今日更新合计（更新日期为今天的数据条数）</li>
+     *   <li>数据总数（统计没有被删除的数据条数）</li>
+     *   <li>平台设备总数（软件平台windows、Linux、Macos分别有多少条数据）</li>
+     * </ul>
+     * <p>
+     * 该方法会调用6个Mapper查询方法来获取数据：
+     * <ul>
+     *   <li>selectTodayNewCount - 统计今日新增</li>
+     *   <li>selectTodayUpdateCount - 统计今日更新</li>
+     *   <li>selectTotalCount - 统计数据总数</li>
+     *   <li>selectWindowsCount - 统计Windows平台数量</li>
+     *   <li>selectLinuxCount - 统计Linux平台数量</li>
+     *   <li>selectMacOSCount - 统计MacOS平台数量</li>
+     * </ul>
+     *
+     * @param reqVO 请求参数，包含软件类别字段 appType
+     * @return 统计数据，包含今日新增、今日更新、数据总数和各平台数量
+     */
+    SoftwareRecordStatisticsRespVO getStatistics(SoftwareRecordStatisticsReqVO reqVO);
 }

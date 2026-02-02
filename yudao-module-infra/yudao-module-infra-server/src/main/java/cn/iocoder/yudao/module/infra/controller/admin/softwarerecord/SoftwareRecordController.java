@@ -101,4 +101,27 @@ public class SoftwareRecordController {
                         BeanUtils.toBean(list, SoftwareRecordRespVO.class));
     }
 
+    /**
+     * 获取软件使用记录统计信息
+     * <p>
+     * 根据软件类别统计相关数据：
+     * <ul>
+     *   <li>今日新增合计（创建日期为今天的数据有多少条）</li>
+     *   <li>今日更新合计（更新日期为今天的数据有多少条）</li>
+     *   <li>数据总数（统计没有被删除的数据条数）</li>
+     *   <li>平台设备总数（软件平台windows、Linux、Macos分别有多少条数据）</li>
+     * </ul>
+     * <p>
+     * 数据来源：infra_gtnes_software_record 表
+     *
+     * @param reqVO 请求参数，包含软件类别字段 appType
+     * @return 统计数据，包含今日新增、今日更新、数据总数和各平台数量
+     */
+    @GetMapping("/statistics")
+    @Operation(summary = "获取软件使用记录统计信息")
+    @jakarta.annotation.security.PermitAll
+    public CommonResult<SoftwareRecordStatisticsRespVO> getStatistics(@Valid SoftwareRecordStatisticsReqVO reqVO) {
+        return success(softwareRecordService.getStatistics(reqVO));
+    }
+
 }

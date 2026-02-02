@@ -21,4 +21,42 @@
         LIMIT 1
     </select>
 
+    <!-- 查询今日新增合计：统计创建日期为今天的数据条数 -->
+    <select id="selectTodayNewCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND deleted = 0
+        AND DATE(create_time) = CURDATE()
+    </select>
+
+    <!-- 查询今日更新合计：统计更新日期为今天的数据条数 -->
+    <select id="selectTodayUpdateCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND deleted = 0
+        AND DATE(update_time) = CURDATE()
+    </select>
+
+    <!-- 查询数据总数：统计没有被删除的数据条数 -->
+    <select id="selectTotalCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND deleted = 0
+    </select>
+
+    <!-- 查询Windows平台总数：统计软件平台为Windows的数据条数（platform=1） -->
+    <select id="selectWindowsCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND platform = 1 AND deleted = 0
+    </select>
+
+    <!-- 查询Linux平台总数：统计软件平台为Linux的数据条数（platform=5） -->
+    <select id="selectLinuxCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND platform = 5 AND deleted = 0
+    </select>
+
+    <!-- 查询MacOS平台总数：统计软件平台为MacOS的数据条数（platform=3） -->
+    <select id="selectMacOSCount" resultType="Long">
+        SELECT COUNT(*) FROM infra_gtnes_software_record
+        WHERE app_type = #{appType} AND platform = 3 AND deleted = 0
+    </select>
+
 </mapper>

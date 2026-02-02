@@ -4,14 +4,15 @@ spring:
   cloud:
     nacos:
       server-addr: 39.105.108.80:8848 # Nacos 服务器地址
+#      server-addr: http://nacos.gtnes.cn # Nacos 服务器地址（本地）
       username: nacos # Nacos 账号
       password: YANjiaqing963 # Nacos 密码
-      discovery: # 【配置中心】配置项
+      discovery: # 【注册中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
         metadata:
           version: 1.0.0 # 服务实例的版本号，可用于灰度发布
-      config: # 【注册中心】配置项
+      config: # 【配置中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
 

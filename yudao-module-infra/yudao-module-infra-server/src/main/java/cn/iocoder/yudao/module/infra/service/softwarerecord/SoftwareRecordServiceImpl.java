@@ -266,4 +266,41 @@ public class SoftwareRecordServiceImpl implements SoftwareRecordService {
         }
         return null;
     }
+
+    /**
+     * 获取软件使用记录统计数据
+     * <p>
+     * 该方法会调用6个Mapper查询方法来获取数据：
+     * <ul>
+     *   <li>selectTodayNewCount - 统计今日新增（创建日期为今天的数据条数）</li>
+     *   <li>selectTodayUpdateCount - 统计今日更新（更新日期为今天的数据条数）</li>
+     *   <li>selectTotalCount - 统计数据总数（没有被删除的数据条数）</li>
+     *   <li>selectWindowsCount - 统计Windows平台数量（software平台为Windows的数据条数，platform=1）</li>
+     *   <li>selectLinuxCount - 统计Linux平台数量（software平台为Linux的数据条数，platform=5）</li>
+     *   <li>selectMacOSCount - 统计MacOS平台数量（software平台为MacOS的数据条数，platform=3）</li>
+     * </ul>
+     * <p>
+     * 所有查询都基于 infra_gtnes_software_record 表，并根据 app_type 过滤软件类别，
+     * 同时使用 deleted = 0 过滤已删除的数据。
+     *
+     * @param reqVO 请求参数，包含软件类别字段 appType
+     * @return 统计数据，包含今日新增、今日更新、数据总数和各平台数量
+     */
+    @Override
+    public SoftwareRecordStatisticsRespVO getStatistics(SoftwareRecordStatisticsReqVO reqVO) {
+        SoftwareRecordStatisticsRespVO respVO = new SoftwareRecordStatisticsRespVO();
+        // 查询今日新增合计（创建日期为今天的数据条数）
+        respVO.setTodayNewCount(softwareRecordMapper.selectTodayNewCount(reqVO.getAppType()));
+        // 查询今日更新合计（更新日期为今天的数据条数）
+        respVO.setTodayUpdateCount(softwareRecordMapper.selectTodayUpdateCount(reqVO.getAppType()));
+        // 查询数据总数（统计没有被删除的数据条数）
+        respVO.setTotalCount(softwareRecordMapper.selectTotalCount(reqVO.getAppType()));
+        // 查询Windows平台总数（软件平台为Windows的数据条数，platform=1）
+        respVO.setWindowsCount(softwareRecordMapper.selectWindowsCount(reqVO.getAppType()));
+        // 查询Linux平台总数（软件平台为Linux的数据条数，platform=5）
+        respVO.setLinuxCount(softwareRecordMapper.selectLinuxCount(reqVO.getAppType()));
+        // 查询MacOS平台总数（软件平台为MacOS的数据条数，platform=3）
+        respVO.setMacOSCount(softwareRecordMapper.selectMacOSCount(reqVO.getAppType()));
+        return respVO;
+    }
 }
