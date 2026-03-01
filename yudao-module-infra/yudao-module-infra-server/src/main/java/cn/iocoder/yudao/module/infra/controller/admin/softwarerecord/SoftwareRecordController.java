@@ -119,7 +119,7 @@ public class SoftwareRecordController {
      */
     @GetMapping("/statistics")
     @Operation(summary = "获取软件使用记录统计信息")
-    @jakarta.annotation.security.PermitAll
+    @PreAuthorize("@ss.hasPermission('infra:software-record:query')")
     public CommonResult<SoftwareRecordStatisticsRespVO> getStatistics(@Valid SoftwareRecordStatisticsReqVO reqVO) {
         return success(softwareRecordService.getStatistics(reqVO));
     }
