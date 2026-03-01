@@ -101,6 +101,11 @@ public class SoftwareRecordServiceImpl implements SoftwareRecordService {
 
     /**
      * 根据设备指纹和IP创建或更新软件使用记录
+     * <p>
+     * 使用悲观锁机制防止并发插入重复数据：
+     * 1. 先尝试查询已有记录
+     * 2. 如果存在则更新
+     * 3. 如果不存在则插入（依赖数据库唯一索引防止重复）
      *
      * @param deviceFingerprint 设备指纹
      * @param ip 客户端IP
@@ -112,59 +117,84 @@ public class SoftwareRecordServiceImpl implements SoftwareRecordService {
      * @param appVersion 应用版本
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createOrUpdateByFingerprintAndIp(String deviceFingerprint, String ip, Integer platform, Integer bit, String platformName, String osRelease, Integer appType, String appVersion) {
-        // 用设备指纹查询
+        // 先查询是否存在记录（包括已删除的，用于处理唯一索引冲突）
         SoftwareRecordDO record = softwareRecordMapper.selectByFingerprint(deviceFingerprint);
-        // ip = "36.142.60.249"; // 测试用IP
+
         if (record != null) {
-            // 更新
-            record.setPlatform(platform);
-            record.setBit(bit);
-            record.setOsRelease(osRelease);
-            record.setAppType(appType);
-            record.setVersion(appVersion);
-            // 检查IP是否发生变化，避免重复更新
-            String oldIp = record.getIp();
-            if (!ip.equals(oldIp)) {
-                record.setIp(ip); // 更新IP
-                // 归属地解析
-                record.setIpHomeLocation(parseIpHomeLocation(ip));
-                log.info("[====== IP INFO ======] IP发生变化，从 {} 更新为 {}，重新解析归属地", oldIp, ip);
-            } else {
-                log.info("[====== IP INFO ======] IP未发生变化，跳过IP和归属地更新");
-            }
-            // 总更新次数
-            record.setTotalUpdateCount(record.getTotalUpdateCount() == null ? 1 : record.getTotalUpdateCount() + 1);
-            // 今日更新次数(判断更新时间的日期是否等于今天)
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime lastUpdateTime = record.getUpdateTime(); // 获取原来的更新时间
-            if (lastUpdateTime != null && 
-                lastUpdateTime.toLocalDate().equals(now.toLocalDate())) {
-                // 如果是今天，今日更新次数+1
-                record.setTodayUpdateCount(record.getTodayUpdateCount() == null ? 1 : record.getTodayUpdateCount() + 1);
-            } else {
-                // 如果不是今天，今日更新次数重置为1
-                record.setTodayUpdateCount(1);
-            }
-            record.setUpdateTime(now); // 设置新的更新时间
-            softwareRecordMapper.updateById(record);
+            // 更新现有记录
+            doUpdateRecord(record, ip, platform, bit, osRelease, appType, appVersion);
         } else {
-            // 新增
-            SoftwareRecordDO newRecord = new SoftwareRecordDO();
-            newRecord.setDeviceFingerprint(deviceFingerprint);
-            newRecord.setIp(ip);
-            newRecord.setPlatform(platform);
-            newRecord.setBit(bit);
-            newRecord.setOsRelease(osRelease);
-            newRecord.setAppType(appType);
-            newRecord.setVersion(appVersion);
-            // 新增逻辑：初始化更新次数
-            newRecord.setTotalUpdateCount(1);
-            newRecord.setTodayUpdateCount(1);
-            // 归属地解析
-            newRecord.setIpHomeLocation(parseIpHomeLocation(ip));
-            softwareRecordMapper.insert(newRecord);
+            // 尝试插入新记录
+            // 如果数据库有唯一索引，并发情况下会抛出异常，需要捕获并重新查询更新
+            try {
+                doInsertRecord(deviceFingerprint, ip, platform, bit, osRelease, appType, appVersion);
+            } catch (org.springframework.dao.DuplicateKeyException e) {
+                // 并发情况下，其他线程已经插入，重新查询并更新
+                log.warn("设备指纹 [{}] 并发插入冲突，转为更新操作", deviceFingerprint);
+                SoftwareRecordDO existRecord = softwareRecordMapper.selectByFingerprint(deviceFingerprint);
+                if (existRecord != null) {
+                    doUpdateRecord(existRecord, ip, platform, bit, osRelease, appType, appVersion);
+                }
+            }
         }
+    }
+
+    /**
+     * 执行记录更新操作
+     */
+    private void doUpdateRecord(SoftwareRecordDO record, String ip, Integer platform, Integer bit,
+                                String osRelease, Integer appType, String appVersion) {
+        record.setPlatform(platform);
+        record.setBit(bit);
+        record.setOsRelease(osRelease);
+        record.setAppType(appType);
+        record.setVersion(appVersion);
+
+        // 检查IP是否发生变化，避免重复更新
+        String oldIp = record.getIp();
+        if (!ip.equals(oldIp)) {
+            record.setIp(ip);
+            record.setIpHomeLocation(parseIpHomeLocation(ip));
+            log.info("[====== IP INFO ======] IP发生变化，从 {} 更新为 {}，重新解析归属地", oldIp, ip);
+        } else {
+            log.info("[====== IP INFO ======] IP未发生变化，跳过IP和归属地更新");
+        }
+
+        // 总更新次数
+        record.setTotalUpdateCount(record.getTotalUpdateCount() == null ? 1 : record.getTotalUpdateCount() + 1);
+
+        // 今日更新次数
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime lastUpdateTime = record.getUpdateTime();
+        if (lastUpdateTime != null && lastUpdateTime.toLocalDate().equals(now.toLocalDate())) {
+            record.setTodayUpdateCount(record.getTodayUpdateCount() == null ? 1 : record.getTodayUpdateCount() + 1);
+        } else {
+            record.setTodayUpdateCount(1);
+        }
+        record.setUpdateTime(now);
+
+        softwareRecordMapper.updateById(record);
+    }
+
+    /**
+     * 执行记录插入操作
+     */
+    private void doInsertRecord(String deviceFingerprint, String ip, Integer platform, Integer bit,
+                                String osRelease, Integer appType, String appVersion) {
+        SoftwareRecordDO newRecord = new SoftwareRecordDO();
+        newRecord.setDeviceFingerprint(deviceFingerprint);
+        newRecord.setIp(ip);
+        newRecord.setPlatform(platform);
+        newRecord.setBit(bit);
+        newRecord.setOsRelease(osRelease);
+        newRecord.setAppType(appType);
+        newRecord.setVersion(appVersion);
+        newRecord.setTotalUpdateCount(1);
+        newRecord.setTodayUpdateCount(1);
+        newRecord.setIpHomeLocation(parseIpHomeLocation(ip));
+        softwareRecordMapper.insert(newRecord);
     }
 
     /**
